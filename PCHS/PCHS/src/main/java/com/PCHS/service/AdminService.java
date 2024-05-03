@@ -15,7 +15,7 @@ import com.PCHS.repository.AdminRepository;
  * @author andre
  */
 @Service
-public class AdminService implements IAdminService {
+public class AdminService{
 
     @Autowired
 	private final PasswordEncoder passwordEncoder;
@@ -28,31 +28,15 @@ public class AdminService implements IAdminService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
-	@Override
     public List<Admin> allAdmins() {
         return (List<Admin>) adminRepo.findAll();
     }
 
-	@Override
     public Admin getAdmin(Long id) {
         Optional<Admin> optionalAdmin = adminRepo.findById(id);
         return optionalAdmin.orElse(null);
     }
 
-	/*@Override
-	public Admin addAdmin(RegisterDto registerDto) {
-        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
-
-		Admin admin = new Admin(registerDto.getEmail(), registerDto.getName(), registerDto.getPassword());
-
-        admin.setPassword(encodedPassword);
-
-		return adminRepo.save(admin);
-	}*/
-
-
-	@Override
     public Admin updateAdmin(Long id, Admin admin) {
         Optional<Admin> optionalAdmin = adminRepo.findById(id);
         if (optionalAdmin.isEmpty()) return null;
@@ -62,14 +46,6 @@ public class AdminService implements IAdminService {
         return adminRepo.save(admin);
     }
 
-
-	@Override
-	public void deleteAdmin(Long id) {
-        Optional<Admin> optionalAdmin = adminRepo.findById(id);
-        if (optionalAdmin.isPresent()){
-			adminRepo.delete(optionalAdmin.get());
-		}
-			
-    }
+	
 
 }

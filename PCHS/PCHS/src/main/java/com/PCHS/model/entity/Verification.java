@@ -1,7 +1,5 @@
 package com.PCHS.model.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -20,7 +18,5 @@ public class Verification {
 
     @Id
     private Long id;
-    private String otp_code;
     private String admin_passcode;
-    private LocalDateTime otpGeneratedTime;
 }

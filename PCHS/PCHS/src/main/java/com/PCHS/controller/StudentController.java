@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.PCHS.model.dto.StudentDto;
 import com.PCHS.model.entity.Student;
-import com.PCHS.service.IStudentService;
+import com.PCHS.service.StudentService;
 
 @RestController
 @RequestMapping("/api/admin/student")
 public class StudentController {
 
     @Autowired
-	private IStudentService studentService;
+	private StudentService studentService;
 	
 	@GetMapping("get-all")
     public List<Student> findStudents(){

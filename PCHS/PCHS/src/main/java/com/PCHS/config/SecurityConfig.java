@@ -39,7 +39,7 @@ public class SecurityConfig {
 		httpSecurity.csrf(AbstractHttpConfigurer::disable)
 			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(request -> request.requestMatchers("/api/auth/**", "/api/mail/**").permitAll()
-                .requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
+                .requestMatchers("/api/admin/**", "/api/superadmin/**").hasAnyAuthority("ADMIN")
 				.anyRequest().authenticated())
 			.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider()).addFilterBefore(

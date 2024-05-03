@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.PCHS.model.dto.LoginDto;
 import com.PCHS.model.dto.ReqRes;
+import com.PCHS.model.entity.Admin;
+import com.PCHS.model.entity.SuperAdmin;
+import com.PCHS.repository.AdminRepository;
+import com.PCHS.repository.SuperAdminRepository;
 import com.PCHS.service.AuthService;
-import com.PCHS.service.VerificationService;
 
 
 
@@ -22,18 +26,31 @@ import com.PCHS.service.VerificationService;
 public class AuthController {
 
     @Autowired
-    private AuthService authService;
+    private AdminRepository adminRepo;
 
     @Autowired
-    private VerificationService verifyService;
+    private SuperAdminRepository superAdminRepo;
 
-    @PostMapping("/register")
-    public ResponseEntity<ReqRes> signUp(@RequestBody ReqRes signUpRequest){
-        return ResponseEntity.ok(authService.registerUp(signUpRequest));
-    }
+    @Autowired
+    private AuthService authService;
+
     @PostMapping("/login")
-    public ResponseEntity<ReqRes> signIn(@RequestBody ReqRes signInRequest){
-        return ResponseEntity.ok(authService.logIn(signInRequest));
+    public LoginDto signIn(@RequestBody ReqRes signInRequest){
+
+        String adminType = "";
+
+        if(superAdminRepo.existsByUsername(signInRequest.getUsername())){
+            adminType = "SuperAdmin";
+        }else if(adminRepo.existsByUsername(signInRequest.getUsername())){
+            adminType = "Admin";
+        }
+
+        String token = authService.logIn(signInRequest, adminType);
+
+        return LoginDto.builder()
+                .adminType(adminType)
+                .token(token)
+                .build();
     }
     @PostMapping("/refresh")
     public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest){
@@ -51,52 +68,9 @@ public class AuthController {
         authService.logoutUser(username, token);
     }
 
-    @PostMapping("/register-code/send")
-    public void sendRegisterCode(){
-        verifyService.sendRegisterCode();
-    }
-
-    @PostMapping("/register-code/verify")
-    public boolean verifyRegisterCode(@RequestBody String code){
-        return verifyService.verifyRegisterCode(code);
-    }
-
-
     @GetMapping("/admin-code/verify")
     public boolean verifyAdminCode(@RequestBody String code){
-        return verifyService.verifyAdminCode(code);
+        return true;//authService.verifyAdminCode(code);
     }
 
-
-
-    /*private final AdminRepository adminRepo;
-
-    private AuthenticationManager authManager;
-
-    @Autowired
-	private IAdminService adminService;
-
-    public AuthController(AdminRepository adminRepo, AuthenticationManager authManager) {
-        this.adminRepo = adminRepo;
-        this.authManager = authManager;
-    }
-
-    @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        Authentication auth = authManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        return new ResponseEntity<>("Admin Login Success!", HttpStatus.OK);
-    }
-
-    @PostMapping("register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
-        if(adminRepo.existsByUsername(registerDto.getEmail())){
-            return new ResponseEntity<>("Email is taken!", HttpStatus.BAD_REQUEST);
-        }
-
-        adminService.addAdmin(registerDto);
-        return new ResponseEntity<>("Admin Registered Success!", HttpStatus.OK);
-    }
-    */
 }

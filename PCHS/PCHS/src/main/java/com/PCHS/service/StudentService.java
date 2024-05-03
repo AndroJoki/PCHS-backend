@@ -11,7 +11,7 @@ import com.PCHS.model.dto.StudentDto;
 import com.PCHS.repository.StudentRepository;
 
 @Service
-public class StudentService implements IStudentService{
+public class StudentService{
 
     @Autowired
 	private StudentRepository studentRepo;
@@ -21,18 +21,15 @@ public class StudentService implements IStudentService{
     }
 
 
-	@Override
     public List<Student> allStudents() {
         return (List<Student>) studentRepo.findAll();
     }
 
-	@Override
     public Student getStudent(Long id) {
         Optional<Student> optionalStudent = studentRepo.findById(id);
         return optionalStudent.orElse(null);
     }
 
-	@Override
 	public Student addStudent(StudentDto studentDto) {
 		Student student = new Student();
 
@@ -51,7 +48,6 @@ public class StudentService implements IStudentService{
 	}
 
 
-	@Override
     public Student updateStudent(Long id, Student student) {
         Optional<Student> optionalStudent = studentRepo.findById(id);
         if (optionalStudent.isEmpty()) return null;
@@ -61,7 +57,6 @@ public class StudentService implements IStudentService{
     }
 
 
-	@Override
 	public void deleteStudent(Long id) {
         Optional<Student> optionalStudent = studentRepo.findById(id);
         if (optionalStudent.isPresent()){

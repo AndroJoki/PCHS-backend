@@ -5,14 +5,16 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.PCHS.model.dto.ReqRes;
 import com.PCHS.model.entity.Admin;
 import com.PCHS.model.entity.AdminAuthToken;
 import com.PCHS.repository.AdminRepository;
+
 import java.util.Optional;
+
+import com.PCHS.repository.SuperAdminRepository;
 
 /**
  *
@@ -25,52 +27,35 @@ public class AuthService {
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private AuthenticationManager authManager;
+    @Autowired
+    private SuperAdminRepository superAdminRepo;
 
-    public ReqRes registerUp(ReqRes registrationRequest){
-        ReqRes resp = new ReqRes();
-        try {
-            Admin admin = new Admin();
-            admin.setName(registrationRequest.getName());
-            admin.setUsername(registrationRequest.getUsername());
-            admin.setPosition(registrationRequest.getPosition());
-            admin.setAdvisory(registrationRequest.getAdvisory());
-            admin.setEmail(registrationRequest.getEmail());
-            admin.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            Admin adminResult = adminRepo.save(admin);
-            if (adminResult != null && adminResult.getId()>0) {
-                resp.setAdmins(adminResult);
-                resp.setMessage("Admin Registered Successfully");
-                resp.setStatusCode(200);
-            }
-        }catch (Exception e){
-            resp.setStatusCode(500);
-            resp.setError(e.getMessage());
-        }
-        return resp;
-    }
 
-    public ReqRes logIn(ReqRes signinRequest){
+    public String logIn(ReqRes signinRequest, String adminType){
         ReqRes response = new ReqRes();
+        String jwt = "";
 
         try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
-            var admin = adminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
-            System.out.println("ADMIN IS: "+ admin);
-            var jwt = jwtUtils.generateToken(admin);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), admin);
-            response.setStatusCode(200);
-            response.setToken(jwt);
-            response.setRefreshToken(refreshToken);
-            response.setExpirationTime("6Hr");
-            response.setMessage("Successfully Logged In");
+            
+            if(adminType.equals("SuperAdmin")){
+                var user = superAdminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
+                jwt = jwtUtils.generateToken(user);
+                /*var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+                response.setToken(jwt);
+                response.setRefreshToken(refreshToken);*/
+            } 
+            else if(adminType.equals("Admin")){
+                var user = adminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
+                jwt = jwtUtils.generateToken(user);
+            }      
+    
         }catch (Exception e){
             response.setStatusCode(500);
             response.setError(e.getMessage());
         }
-        return response;
+        return jwt;
     }
 
     public ReqRes refreshToken(ReqRes refreshTokenReqiest){

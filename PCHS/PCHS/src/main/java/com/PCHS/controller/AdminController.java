@@ -4,7 +4,6 @@ package com.PCHS.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.PCHS.model.entity.Admin;
-import com.PCHS.service.IAdminService;
+import com.PCHS.service.AdminService;
 
 /**
  *
@@ -24,7 +23,7 @@ import com.PCHS.service.IAdminService;
 public class AdminController {
 	
 	@Autowired
-	private IAdminService adminService;
+	private AdminService adminService;
 	
 	@GetMapping("get-all")
     public List<Admin> findAdmins(){
@@ -40,12 +39,6 @@ public class AdminController {
     public Admin updateAdmin(@PathVariable Long id, @RequestBody Admin admin)
     {
         return adminService.updateAdmin(id, admin);
-    }
-
-    @DeleteMapping("delete/{id}")
-    public void deleteDog(@PathVariable Long id)
-    {
-        adminService.deleteAdmin(id);
     }
 
 }
