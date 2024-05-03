@@ -19,7 +19,8 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        if (superAdminRepo.findByUsername("PCHSsuperadmin") == null) {
+
+        if(superAdminRepo.existsByUsername("PCHSsuperadmin") == false) {
             SuperAdmin superAdmin = new SuperAdmin();
             superAdmin.setUsername("PCHSsuperadmin");
             superAdmin.setPassword(passwordEncoder.encode("PCHS123"));

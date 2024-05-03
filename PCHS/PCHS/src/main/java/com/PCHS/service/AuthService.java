@@ -40,11 +40,9 @@ public class AuthService {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
             
             if(adminType.equals("SuperAdmin")){
+                System.out.println("SuperAdmin Success");
                 var user = superAdminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
                 jwt = jwtUtils.generateToken(user);
-                /*var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
-                response.setToken(jwt);
-                response.setRefreshToken(refreshToken);*/
             } 
             else if(adminType.equals("Admin")){
                 var user = adminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
@@ -84,4 +82,9 @@ public class AuthService {
         adminRepo.save(optionalAdmin.get());
         return true;
     }
+
+
+    /*var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+                response.setToken(jwt);
+                response.setRefreshToken(refreshToken);*/
 }

@@ -8,12 +8,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.PCHS.repository.AdminRepository;
+import com.PCHS.repository.SuperAdminRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService{
 
     @Autowired
-	 private AdminRepository adminRepo;
+	private AdminRepository adminRepo;
+
+    @Autowired
+    private SuperAdminRepository superAdminRepo;
 
 	/*@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -31,6 +35,11 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return adminRepo.findByUsername(username).orElseThrow();
+        if(superAdminRepo.existsByUsername(username)){
+            return superAdminRepo.findByUsername(username).orElseThrow();
+        } else if (adminRepo.existsByUsername(username)){
+            return adminRepo.findByUsername(username).orElseThrow();
+        }
+        return null;
     }
 }
