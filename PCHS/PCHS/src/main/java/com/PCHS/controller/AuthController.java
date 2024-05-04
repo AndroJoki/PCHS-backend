@@ -5,18 +5,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.PCHS.exceptions.AlreadyExistException;
 import com.PCHS.exceptions.MissingException;
 import com.PCHS.model.dto.LoginDto;
 import com.PCHS.model.dto.ReqRes;
+import com.PCHS.model.dto.StudentDto;
+import com.PCHS.model.entity.Student;
 import com.PCHS.repository.AdminRepository;
 import com.PCHS.repository.SuperAdminRepository;
 import com.PCHS.service.AuthService;
+import com.PCHS.service.StudentService;
 
 
 
@@ -32,6 +35,9 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private StudentService studentService;
 
     @PostMapping("/login")
     public LoginDto signIn(@RequestBody ReqRes signInRequest) throws Exception {
@@ -71,5 +77,16 @@ public class AuthController {
         String token = details.getSessionId();
 
         authService.logoutUser(username, token);
+    }
+
+
+    @PostMapping("student/add")
+    public StudentDto addStudentRequest(@RequestBody StudentDto addRequest) throws Exception
+    {   
+        if (studentService.isStudentExistByEmail(addRequest.getEmail())) {
+            throw new AlreadyExistException("Email");
+        }
+        Student student = studentService.addStudent(addRequest);
+        return StudentDto.buildStudentInfo(student);
     }
 }
