@@ -27,26 +27,24 @@ public class MailService {
     }
 
     @Async
-    public void sendCodeMail(String code) {
+    public void sendContactUsMail(String name, String email, String subject, String msg) {
 
         String targetEmail = "andrewjoquino@gmail.com";
 
-        String verificationMessage = String.format(
+        String msgBody = String.format(
                 """
-                Here's your OTP
-                Hi there,
-                Your OTP (One-time PIN) is %s
-                
-                Please enter this code within 5 minutes. 
-                Remember, DO NOT share the code with anyone.
+                From %s,
+                %s
+
+                %s
                 """,
-                code
+                name, email, msg
         );
 
         sendMail(
                 targetEmail,
-                "Admin Register Verification",
-                verificationMessage
+                subject,
+                msgBody
         );
     }
 }

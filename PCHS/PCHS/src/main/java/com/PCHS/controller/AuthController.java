@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.PCHS.exceptions.MissingException;
 import com.PCHS.model.dto.LoginDto;
 import com.PCHS.model.dto.ReqRes;
-import com.PCHS.model.entity.Admin;
-import com.PCHS.model.entity.SuperAdmin;
 import com.PCHS.repository.AdminRepository;
 import com.PCHS.repository.SuperAdminRepository;
 import com.PCHS.service.AuthService;
@@ -35,7 +34,12 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public LoginDto signIn(@RequestBody ReqRes signInRequest){
+    public LoginDto signIn(@RequestBody ReqRes signInRequest) throws Exception {
+
+        if (!superAdminRepo.existsByUsername(signInRequest.getUsername()) && 
+        !adminRepo.existsByUsername(signInRequest.getUsername())) {
+            throw new MissingException("Username");
+        }
 
         String adminType = "";
 
@@ -52,8 +56,9 @@ public class AuthController {
                 .token(token)
                 .build();
     }
+    
     @PostMapping("/refresh")
-    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest){
+    public ResponseEntity<ReqRes> refreshToken(@RequestBody ReqRes refreshTokenRequest) throws Exception{
         return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
     }
 
@@ -67,10 +72,4 @@ public class AuthController {
 
         authService.logoutUser(username, token);
     }
-
-    @GetMapping("/admin-code/verify")
-    public boolean verifyAdminCode(@RequestBody String code){
-        return true;//authService.verifyAdminCode(code);
-    }
-
 }

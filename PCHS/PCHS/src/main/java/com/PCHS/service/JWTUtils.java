@@ -72,7 +72,7 @@ public class JWTUtils {
         return extractClaims(token, Claims::getExpiration).before(new Date());
     }
 
-    public void isTokenAllowedByUser(String username, String token) {
+    /*public void isTokenAllowedByUser(String username, String token) {
         Optional<Admin> optionalAdmin = adminRepo.findByUsername(username);
         if (optionalAdmin.isPresent()){
 
@@ -91,6 +91,6 @@ public class JWTUtils {
             admin.setAdminAuthTokens(updatedAllowedTokens);
             adminRepo.save(admin);
         }
-    }
+    }*/
 }
 

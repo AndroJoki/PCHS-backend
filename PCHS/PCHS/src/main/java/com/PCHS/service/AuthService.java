@@ -40,7 +40,6 @@ public class AuthService {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
             
             if(adminType.equals("SuperAdmin")){
-                System.out.println("SuperAdmin Success");
                 var user = superAdminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
                 jwt = jwtUtils.generateToken(user);
             } 

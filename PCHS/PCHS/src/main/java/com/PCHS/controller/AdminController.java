@@ -4,6 +4,8 @@ package com.PCHS.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.PCHS.exceptions.MissingException;
+import com.PCHS.model.dto.AdminDto;
 import com.PCHS.model.entity.Admin;
 import com.PCHS.service.AdminService;
 
@@ -24,21 +28,62 @@ public class AdminController {
 	
 	@Autowired
 	private AdminService adminService;
-	
+
+    @GetMapping
+    public AdminDto getSelfInfo(Authentication authentication) {
+        Admin selfUser = ((Admin) authentication.getPrincipal());
+        return AdminDto.buildAdminInfo(selfUser);
+    }
+
+
 	@GetMapping("get-all")
-    public List<Admin> findAdmins(){
-       return adminService.allAdmins();
+    public List<AdminDto> findAdminsRequest() throws Exception {
+
+        List<AdminDto> results = new java.util.ArrayList<>(List.of());
+        
+        results = adminService.allAdmins()
+                .stream()
+                .map(AdminDto::buildAdminInfo)
+                .toList();
+
+        return results;
+    }
+
+    @GetMapping("page/{offset}")
+    private List<AdminDto> getStudentsWithPage(@PathVariable int offset) throws Exception {
+        
+        List<AdminDto> results = new java.util.ArrayList<>(List.of());
+
+        results = adminService.adminsWithPage(offset)
+                .stream()
+                .map(AdminDto::buildAdminInfo)
+                .toList();
+
+        return results;
     }
 
 	@GetMapping("show/{id}")
-    public Admin showAdmin(@PathVariable Long id) {
-       return adminService.getAdmin(id);
+    public AdminDto showAdminRequest(@PathVariable Long id) throws Exception {
+       return AdminDto.buildAdminInfo(adminService.getAdmin(id));
     }
 
-    @PutMapping("update/{id}")
-    public Admin updateAdmin(@PathVariable Long id, @RequestBody Admin admin)
+    @PutMapping("update")
+    public AdminDto updateAdminRequest(Authentication authentication, @RequestBody Admin admin) throws Exception
     {
-        return adminService.updateAdmin(id, admin);
+        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        Admin optionalAdmin = adminService.getAdminByUsername(username);
+
+        if (optionalAdmin == null) throw new MissingException("Admin");
+
+        if (admin.getName() != null) optionalAdmin.setName(admin.getName());
+        if (admin.getUsername() != null) optionalAdmin.setUsername(admin.getUsername());
+        if (admin.getAdvisory() != null) optionalAdmin.setAdvisory(admin.getAdvisory());
+        if (admin.getPosition() != null) optionalAdmin.setPosition(admin.getPosition());
+        if (admin.getEmail() != null) optionalAdmin.setEmail(admin.getEmail());
+        if (admin.getPassword() != null) optionalAdmin.setPassword(admin.getPassword());
+
+        Admin updatedAdmin = adminService.updateAdmin(username, optionalAdmin);
+        return AdminDto.buildAdminInfo(updatedAdmin);
     }
 
 }

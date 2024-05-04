@@ -24,6 +24,7 @@ public class Student {
 	private String gradeLevel;
 	private String classification;
     private int age;
+    private String address;
     private String fatherName;
     private String motherName;
     private String contactNum;

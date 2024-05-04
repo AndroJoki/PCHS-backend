@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.PCHS.model.dto.AdminDto;
 import com.PCHS.model.dto.ReqRes;
 import com.PCHS.model.entity.Admin;
 import com.PCHS.repository.AdminRepository;
@@ -19,34 +20,38 @@ public class SuperAdminService {
 	@Autowired
 	private AdminRepository adminRepo;
 
-    public ReqRes addAdmin(ReqRes addRequest){
+    public Admin addAdmin(AdminDto addRequest){
         ReqRes resp = new ReqRes();
+        Admin admin = new Admin();
         try {
-            Admin admin = new Admin();
+            
             admin.setName(addRequest.getName());
             admin.setUsername(addRequest.getUsername());
             admin.setPosition(addRequest.getPosition());
             admin.setAdvisory(addRequest.getAdvisory());
             admin.setEmail(addRequest.getEmail());
             admin.setPassword(passwordEncoder.encode(addRequest.getPassword()));
-            Admin adminResult = adminRepo.save(admin);
-            if (adminResult != null && adminResult.getId()>0) {
-                resp.setAdmins(adminResult);
-                resp.setMessage("Admin Registered Successfully");
-                resp.setStatusCode(200);
-            }
         }catch (Exception e){
             resp.setStatusCode(500);
             resp.setError(e.getMessage());
         }
-        return resp;
+        return adminRepo.save(admin);
     }
 
-    public void deleteAdmin(Long id) {
+    public Admin deleteAdmin(Long id) {
         Optional<Admin> optionalAdmin = adminRepo.findById(id);
         if (optionalAdmin.isPresent()){
 			adminRepo.delete(optionalAdmin.get());
 		}
+        return optionalAdmin.get();
 			
+    }
+
+    public boolean isAdminExistByEmail(String email) {
+        return adminRepo.existsByEmail(email);
+    }
+
+    public boolean isAdminExistByUsername(String username) {
+        return adminRepo.existsByUsername(username);
     }
 }

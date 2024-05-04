@@ -26,7 +26,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name = "admins", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "admins", uniqueConstraints = @UniqueConstraint(columnNames = {"email", "username"}))
 public class Admin implements UserDetails{
 
     @Id
