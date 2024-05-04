@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import com.PCHS.model.dto.AdminDto;
 import com.PCHS.model.dto.ReqRes;
 import com.PCHS.model.entity.Admin;
+import com.PCHS.model.entity.SuperAdmin;
 import com.PCHS.repository.AdminRepository;
+import com.PCHS.repository.SuperAdminRepository;
 
 @Service
 public class SuperAdminService {
@@ -19,6 +21,9 @@ public class SuperAdminService {
 	
 	@Autowired
 	private AdminRepository adminRepo;
+
+    @Autowired
+    private SuperAdminRepository superAdminRepo;
 
     public Admin addAdmin(AdminDto addRequest){
         ReqRes resp = new ReqRes();
@@ -53,5 +58,19 @@ public class SuperAdminService {
 
     public boolean isAdminExistByUsername(String username) {
         return adminRepo.existsByUsername(username);
+    }
+
+    public SuperAdmin getSuperAdminByUsername(String username) {
+        Optional<SuperAdmin> optionalSuperAdmin = superAdminRepo.findByUsername(username);
+        return optionalSuperAdmin.orElse(null);
+    }
+
+    public SuperAdmin updateSuperAdmin(String username, SuperAdmin superAdmin) {
+        Optional<SuperAdmin> optionalSuperAdmin = superAdminRepo.findByUsername(username);
+        if (optionalSuperAdmin.isEmpty()) return null;
+
+        superAdmin.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
+        superAdmin.setId(optionalSuperAdmin.get().getId());
+        return superAdminRepo.save(superAdmin);
     }
 }

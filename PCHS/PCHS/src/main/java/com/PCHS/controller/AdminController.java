@@ -30,7 +30,7 @@ public class AdminController {
 	private AdminService adminService;
 
     @GetMapping
-    public AdminDto getSelfInfo(Authentication authentication) {
+    public AdminDto getSelfInfo(Authentication authentication) throws Exception{
         Admin selfUser = ((Admin) authentication.getPrincipal());
         return AdminDto.buildAdminInfo(selfUser);
     }
