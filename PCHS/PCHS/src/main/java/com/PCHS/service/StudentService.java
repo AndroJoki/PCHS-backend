@@ -6,12 +6,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.PCHS.model.dto.StudentDto;
 import com.PCHS.model.entity.Student;
 import com.PCHS.repository.StudentRepository;
 
+/**
+ *
+ * @author andre
+ */
 @Service
 public class StudentService{
 
@@ -30,6 +35,14 @@ public class StudentService{
         Page<Student> students = studentRepo.findAll(PageRequest.of(offset, 10));
         return students;
     }
+
+
+    public Page<Student> findEnrolledStudents(int offset, String field, String direction, String enrollStatus) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction.toUpperCase());
+        return studentRepo.findAllByEnrollStatus(enrollStatus, PageRequest.of(offset, 10, sortDirection, field));
+    }
+    
+    
 
     public List<Student> allStudents() {
         return (List<Student>) studentRepo.findAll();
