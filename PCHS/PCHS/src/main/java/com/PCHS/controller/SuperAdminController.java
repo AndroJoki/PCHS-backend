@@ -62,14 +62,18 @@ public class SuperAdminController {
     public SuperAdminDto updateSuperAdminRequest(Authentication authentication, @RequestBody SuperAdmin superAdmin) throws Exception
     {
         String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        Boolean passwordChanged=false;
         SuperAdmin optionalSuperAdmin = superAdminService.getSuperAdminByUsername(username);
 
         if (optionalSuperAdmin == null) throw new MissingException("SuperAdmin");
 
-        if (superAdmin.getUsername() != null) optionalSuperAdmin.setUsername(superAdmin.getUsername());
-        if (superAdmin.getPassword() != null) optionalSuperAdmin.setPassword(superAdmin.getPassword());
+        if (superAdmin.getUsername().equals("")) optionalSuperAdmin.setUsername(superAdmin.getUsername());
+        if (superAdmin.getPassword().equals("")){
+            optionalSuperAdmin.setPassword(superAdmin.getPassword());
+            passwordChanged=true;
+        } 
 
-        SuperAdmin updatedSuperAdmin = superAdminService.updateSuperAdmin(username, optionalSuperAdmin);
+        SuperAdmin updatedSuperAdmin = superAdminService.updateSuperAdmin(username, passwordChanged, optionalSuperAdmin);
         return SuperAdminDto.builder()
             .username(updatedSuperAdmin.getUsername())
             .password(updatedSuperAdmin.getPassword())

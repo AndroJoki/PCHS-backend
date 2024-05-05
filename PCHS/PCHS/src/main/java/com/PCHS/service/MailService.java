@@ -29,7 +29,7 @@ public class MailService {
     @Async
     public void sendContactUsMail(String name, String email, String subject, String msg) {
 
-        String targetEmail = "andrewjoquino@gmail.com";
+        String targetEmail = "pchsit135@gmail.com";
 
         String msgBody = String.format(
                 """
