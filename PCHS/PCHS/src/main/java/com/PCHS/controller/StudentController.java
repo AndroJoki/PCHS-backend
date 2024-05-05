@@ -29,7 +29,7 @@ public class StudentController {
         
         results = studentService.allStudents()
                 .stream()
-                .map(StudentDto::buildStudentInfo)
+                .map(StudentDto::getStudentInfo)
                 .toList();
 
         return results;
