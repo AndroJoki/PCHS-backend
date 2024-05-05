@@ -1,12 +1,11 @@
 package com.PCHS.service;
 
-import java.util.HashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.PCHS.exceptions.MissingException;
 import com.PCHS.model.dto.ReqRes;
 import com.PCHS.model.entity.Admin;
 import com.PCHS.model.entity.AdminAuthToken;
@@ -32,13 +31,11 @@ public class AuthService {
     private SuperAdminRepository superAdminRepo;
 
 
-    public String logIn(ReqRes signinRequest, String adminType){
-        ReqRes response = new ReqRes();
+    public String logIn(ReqRes signinRequest, String adminType) throws Exception{
         String jwt = "";
 
         try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(),signinRequest.getPassword()));
-            
             if(adminType.equals("SuperAdmin")){
                 var user = superAdminRepo.findByUsername(signinRequest.getUsername()).orElseThrow();
                 jwt = jwtUtils.generateToken(user);
@@ -49,8 +46,7 @@ public class AuthService {
             }      
     
         }catch (Exception e){
-            response.setStatusCode(500);
-            response.setError(e.getMessage());
+           throw new MissingException("User");
         }
         return jwt;
     }

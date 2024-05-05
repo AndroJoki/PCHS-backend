@@ -44,7 +44,7 @@ public class AuthController {
 
         if (!superAdminRepo.existsByUsername(signInRequest.getUsername()) && 
         !adminRepo.existsByUsername(signInRequest.getUsername())) {
-            throw new MissingException("Username");
+            throw new MissingException("User");
         }
 
         String adminType = "";
