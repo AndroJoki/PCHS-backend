@@ -1,15 +1,15 @@
 package com.PCHS.model.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @Entity
 @Table(name = "students")
 public class Student {
@@ -19,6 +19,7 @@ public class Student {
 	private Long id;
 
 	private String name;
+    private String schoolYear;
     private String learnerRefNo;
     private String email;
 	private String gradeLevel;
@@ -29,4 +30,11 @@ public class Student {
     private String motherName;
     private String contactNum;
     private String enrollStatus;
+
+    public Student() {
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        int nextYear = currentYear + 1;
+        this.schoolYear = currentYear + "-" + nextYear;
+    }
 }

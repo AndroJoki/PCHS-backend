@@ -29,13 +29,13 @@ public class StudentController {
         
         results = studentService.allStudents()
                 .stream()
-                .map(StudentDto::getStudentInfo)
+                .map(StudentDto::buildStudentInfo)
                 .toList();
 
         return results;
     }
 
-    @GetMapping("page/{offset}")
+    /*@GetMapping("page/{offset}")
     private List<StudentDto> getStudentsWithPage(@PathVariable int offset) throws Exception {
         
         List<StudentDto> results = new java.util.ArrayList<>(List.of());
@@ -63,11 +63,26 @@ public class StudentController {
                 .toList();
 
         return results;
+    }*/
+
+    @GetMapping("get-all/{status}/{schoolYear}")
+    private List<StudentDto> getAllStudents(
+        @PathVariable String status,
+        @PathVariable String schoolYear) throws Exception {
+        
+        List<StudentDto> results = new java.util.ArrayList<>(List.of());
+
+        results = studentService.findStudentsBySchoolYearAndEnrollStatus(status, schoolYear)
+                .stream()
+                .map(StudentDto::buildStudentInfo)
+                .toList();
+
+        return results;
     }
 
 	@GetMapping("show/{id}")
     public StudentDto showStudentRequest(@PathVariable Long id) throws Exception {
-       return StudentDto.buildStudentInfo(studentService.getStudent(id));
+       return StudentDto.buildStudentInfo(studentService.getStudentById(id));
     }
 
     @PutMapping("update/{id}")

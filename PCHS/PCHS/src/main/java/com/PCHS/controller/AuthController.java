@@ -81,11 +81,13 @@ public class AuthController {
 
 
     @PostMapping("student/add")
-    public StudentDto addStudentRequest(@RequestBody StudentDto addRequest) throws Exception
-    {   
-        if (studentService.isStudentExistByEmail(addRequest.getEmail())) {
-            throw new AlreadyExistException("Email");
+    public StudentDto createStudentRequest(@RequestBody StudentDto addRequest) throws Exception {
+
+        addRequest.generateSchoolYear();
+        if (studentService.isStudentExists(addRequest.getEmail(), addRequest.getSchoolYear())) {
+            throw new AlreadyExistException("Student");
         }
+
         Student student = studentService.addStudent(addRequest);
         return StudentDto.buildStudentInfo(student);
     }

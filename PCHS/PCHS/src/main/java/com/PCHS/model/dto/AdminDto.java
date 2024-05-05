@@ -18,17 +18,6 @@ public class AdminDto {
 
     public static AdminDto buildAdminInfo(Admin admin) {
         return AdminDto.builder()
-                .name(admin.getName())
-                .username(admin.getUsername())
-                .position(admin.getPosition())
-                .advisory(admin.getAdvisory())
-                .email(admin.getEmail())
-                .password(admin.getPassword())
-                .build();
-    }
-
-    public static AdminDto getAdminInfo(Admin admin) {
-        return AdminDto.builder()
                 .id(admin.getId())
                 .name(admin.getName())
                 .username(admin.getUsername())
@@ -38,4 +27,5 @@ public class AdminDto {
                 .password(admin.getPassword())
                 .build();
     }
+
 }

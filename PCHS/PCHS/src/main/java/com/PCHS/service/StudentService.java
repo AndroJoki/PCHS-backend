@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.PCHS.model.dto.StudentDto;
@@ -27,8 +26,8 @@ public class StudentService{
         this.studentRepo = studentRepo;
     }
 
-    public boolean isStudentExistByEmail(String email) {
-        return studentRepo.existsByEmail(email);
+    public boolean isStudentExists(String email, String schoolYear) {
+        return studentRepo.existsByEmailAndSchoolYear(email, schoolYear);
     }
 
     public Page<Student> studentsWithPage(int offset){
@@ -37,18 +36,22 @@ public class StudentService{
     }
 
 
-    public Page<Student> findEnrolledStudents(int offset, String field, String direction, String enrollStatus) {
+    /*public Page<Student> findEnrolledStudents(int offset, String field, String direction) {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction.toUpperCase());
-        return studentRepo.findAllByEnrollStatus(enrollStatus, PageRequest.of(offset, 10, sortDirection, field));
+        return studentRepo.findAllByEnrollStatus(PageRequest.of(offset, 10, sortDirection, field));
+    }*/
+    
+    
+    public List<Student> findStudentsBySchoolYearAndEnrollStatus(String status, String schoolYear){
+        return studentRepo.findAllByEnrollStatusAndSchoolYear(status, schoolYear);
     }
-    
-    
+
 
     public List<Student> allStudents() {
         return (List<Student>) studentRepo.findAll();
     }
 
-    public Student getStudent(Long id) {
+    public Student getStudentById(Long id) {
         Optional<Student> optionalStudent = studentRepo.findById(id);
         return optionalStudent.orElse(null);
     }
