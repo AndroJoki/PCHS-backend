@@ -18,7 +18,7 @@ public class StudentDto {
     private String email;
 	private String gradeLevel;
 	private String classification;
-    private int age;
+    private String age;
     private String address;
     private String fatherName;
     private String motherName;
