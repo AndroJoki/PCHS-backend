@@ -71,18 +71,22 @@ public class AdminController {
     public AdminDto updateAdminRequest(Authentication authentication, @RequestBody Admin admin) throws Exception
     {
         String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        Boolean passwordChanged=false;
         Admin optionalAdmin = adminService.getAdminByUsername(username);
 
         if (optionalAdmin == null) throw new MissingException("Admin");
 
-        if (admin.getName() != null) optionalAdmin.setName(admin.getName());
-        if (admin.getUsername() != null) optionalAdmin.setUsername(admin.getUsername());
-        if (admin.getAdvisory() != null) optionalAdmin.setAdvisory(admin.getAdvisory());
-        if (admin.getPosition() != null) optionalAdmin.setPosition(admin.getPosition());
-        if (admin.getEmail() != null) optionalAdmin.setEmail(admin.getEmail());
-        if (admin.getPassword() != null) optionalAdmin.setPassword(admin.getPassword());
+        if (!admin.getName().equals("")) optionalAdmin.setName(admin.getName());
+        if (!admin.getUsername().equals("")) optionalAdmin.setUsername(admin.getUsername());
+        if (!admin.getAdvisory().equals("")) optionalAdmin.setAdvisory(admin.getAdvisory());
+        if (!admin.getPosition().equals("")) optionalAdmin.setPosition(admin.getPosition());
+        if (!admin.getEmail().equals("")) optionalAdmin.setEmail(admin.getEmail());
+        if (!admin.getPassword().equals("")){
+            optionalAdmin.setPassword(admin.getPassword());
+            passwordChanged=true;
+        }
 
-        Admin updatedAdmin = adminService.updateAdmin(username, optionalAdmin);
+        Admin updatedAdmin = adminService.updateAdmin(username, passwordChanged, optionalAdmin);
         return AdminDto.buildAdminInfo(updatedAdmin);
     }
 

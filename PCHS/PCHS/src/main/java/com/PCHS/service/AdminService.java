@@ -50,11 +50,11 @@ public class AdminService{
         return optionalAdmin.orElse(null);
     }
 
-    public Admin updateAdmin(String username, Admin admin) {
+    public Admin updateAdmin(String username, Boolean passwordChanged, Admin admin) {
         Optional<Admin> optionalAdmin = adminRepo.findByUsername(username);
         if (optionalAdmin.isEmpty()) return null;
 
-        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        if(passwordChanged) admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         admin.setId(optionalAdmin.get().getId());
         return adminRepo.save(admin);
     }
