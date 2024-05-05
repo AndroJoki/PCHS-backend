@@ -43,7 +43,7 @@ public class AdminController {
         
         results = adminService.allAdmins()
                 .stream()
-                .map(AdminDto::buildAdminInfo)
+                .map(AdminDto::getAdminInfo)
                 .toList();
 
         return results;
