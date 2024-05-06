@@ -20,7 +20,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        if(superAdminRepo.existsByUsername("PCHSsuperadmin") == false) {
+        if(superAdminRepo.existsById(1l) == false) {
             SuperAdmin superAdmin = new SuperAdmin();
             superAdmin.setUsername("PCHSsuperadmin");
             superAdmin.setPassword(passwordEncoder.encode("PCHS123"));

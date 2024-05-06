@@ -65,12 +65,17 @@ public class SuperAdminService {
         return optionalSuperAdmin.orElse(null);
     }
 
-    public SuperAdmin updateSuperAdmin(String username, Boolean passwordChanged, SuperAdmin superAdmin) {
-        Optional<SuperAdmin> optionalSuperAdmin = superAdminRepo.findByUsername(username);
+    public SuperAdmin getSuperAdminById(Long id) {
+        Optional<SuperAdmin> optionalSuperAdmin = superAdminRepo.findById(id);
+        return optionalSuperAdmin.orElse(null);
+    }
+
+    public SuperAdmin updateSuperAdmin(Boolean passwordChanged, SuperAdmin superAdmin) {
+        Optional<SuperAdmin> optionalSuperAdmin = superAdminRepo.findById(1l);
         if (optionalSuperAdmin.isEmpty()) return null;
 
         if(passwordChanged) superAdmin.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
-        superAdmin.setId(optionalSuperAdmin.get().getId());
+        superAdmin.setId(1l);
         return superAdminRepo.save(superAdmin);
     }
 }

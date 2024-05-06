@@ -59,11 +59,10 @@ public class SuperAdminController {
     }
 
     @PutMapping("update")
-    public SuperAdminDto updateSuperAdminRequest(Authentication authentication, @RequestBody SuperAdmin superAdmin) throws Exception
+    public SuperAdminDto updateSuperAdminRequest(@RequestBody SuperAdmin superAdmin) throws Exception
     {
-        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
         Boolean passwordChanged=false;
-        SuperAdmin optionalSuperAdmin = superAdminService.getSuperAdminByUsername(username);
+        SuperAdmin optionalSuperAdmin = superAdminService.getSuperAdminById(1l);
 
         if (optionalSuperAdmin == null) throw new MissingException("SuperAdmin");
 
@@ -73,7 +72,7 @@ public class SuperAdminController {
             passwordChanged=true;
         } 
 
-        SuperAdmin updatedSuperAdmin = superAdminService.updateSuperAdmin(username, passwordChanged, optionalSuperAdmin);
+        SuperAdmin updatedSuperAdmin = superAdminService.updateSuperAdmin(passwordChanged, optionalSuperAdmin);
         return SuperAdminDto.builder()
             .username(updatedSuperAdmin.getUsername())
             .password(updatedSuperAdmin.getPassword())

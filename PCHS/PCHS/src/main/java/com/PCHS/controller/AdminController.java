@@ -67,12 +67,11 @@ public class AdminController {
        return AdminDto.buildAdminInfo(adminService.getAdmin(id));
     }
 
-    @PutMapping("update")
-    public AdminDto updateAdminRequest(Authentication authentication, @RequestBody Admin admin) throws Exception
+    @PutMapping("update/{id}")
+    public AdminDto updateAdminRequest(@PathVariable Long id, @RequestBody Admin admin) throws Exception
     {
-        String username = ((UserDetails) authentication.getPrincipal()).getUsername();
         Boolean passwordChanged=false;
-        Admin optionalAdmin = adminService.getAdminByUsername(username);
+        Admin optionalAdmin = adminService.getAdmin(id);
 
         if (optionalAdmin == null) throw new MissingException("Admin");
 
@@ -86,7 +85,7 @@ public class AdminController {
             passwordChanged=true;
         }
 
-        Admin updatedAdmin = adminService.updateAdmin(username, passwordChanged, optionalAdmin);
+        Admin updatedAdmin = adminService.updateAdmin(id, passwordChanged, optionalAdmin);
         return AdminDto.buildAdminInfo(updatedAdmin);
     }
 
