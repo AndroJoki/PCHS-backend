@@ -66,8 +66,8 @@ public class SuperAdminController {
 
         if (optionalSuperAdmin == null) throw new MissingException("SuperAdmin");
 
-        if (superAdmin.getUsername().equals("")) optionalSuperAdmin.setUsername(superAdmin.getUsername());
-        if (superAdmin.getPassword().equals("")){
+        if (!superAdmin.getUsername().equals("")) optionalSuperAdmin.setUsername(superAdmin.getUsername());
+        if (!superAdmin.getPassword().equals("")){
             optionalSuperAdmin.setPassword(superAdmin.getPassword());
             passwordChanged=true;
         } 
